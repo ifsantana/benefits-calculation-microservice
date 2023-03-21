@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-savings-api-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-savings-api-client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-txn-feed-api-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-txn-feed-api-client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/benefits-calculation-ioc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/benefits-calculation-ioc/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/core/benefits-calculation-application/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/core/benefits-calculation-application/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/core/benefits-calculation-domain/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/core/benefits-calculation-domain/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ports/benefits-calculation-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ports/benefits-calculation-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

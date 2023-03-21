@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="benefits-calculation-api" />
+        <module name="benefits-calculation-savings-api-client" />
+        <module name="benefits-calculation-txn-feed-api-client" />
+        <module name="benefits-calculation-ioc" />
+        <module name="benefits-calculation-domain" />
+        <module name="benefits-calculation-application" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
