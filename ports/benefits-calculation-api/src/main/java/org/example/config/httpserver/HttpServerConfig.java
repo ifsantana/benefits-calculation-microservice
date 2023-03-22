@@ -1,6 +1,5 @@
 package org.example.config.httpserver;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,7 +17,7 @@ public class HttpServerConfig implements CustomHttpServer {
   public void start(List<Endpoint> handlers)  throws IOException {
     this.server = HttpServer.create(new InetSocketAddress(8000), 0);
     this.configureHttpHandler(this.server, handlers);
-    this.executor = Executors.newFixedThreadPool(DEFAULT_CUSTOM_THREAD_POOL);
+    this.executor = Executors.newFixedThreadPool(this.getIdealNumberOfCores());
     this.server.setExecutor(this.executor);
     this.server.start();
   }
@@ -27,5 +26,9 @@ public class HttpServerConfig implements CustomHttpServer {
   public void configureHttpHandler(HttpServer server, List<Endpoint> handlers) {
     for(Endpoint handler : handlers)
       server.createContext( handler.getEndpointURN(), handler);
+  }
+
+  private int getIdealNumberOfCores() {
+    return Runtime.getRuntime().availableProcessors();
   }
 }
