@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-savings-api-client/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-txn-feed-api-client/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/adapters/benefits-calculation-txn-feed-api-client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/benefits-calculation-cross-cutting/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/benefits-calculation-cross-cutting/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/benefits-calculation-ioc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/benefits-calculation-ioc/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/core/benefits-calculation-application/src/main/java" charset="UTF-8" />

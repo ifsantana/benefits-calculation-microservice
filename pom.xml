@@ -10,6 +10,7 @@
   <version>1.0-SNAPSHOT</version>
   <modules>
     <module>common/benefits-calculation-ioc</module>
+    <module>common/benefits-calculation-cross-cutting</module>
     <module>ports/benefits-calculation-api</module>
     <module>adapters/benefits-calculation-savings-api-client</module>
     <module>adapters/benefits-calculation-txn-feed-api-client</module>

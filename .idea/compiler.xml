@@ -7,12 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="benefits-calculation-api" />
-        <module name="benefits-calculation-microservice-api" />
         <module name="benefits-calculation-savings-api-client" />
         <module name="benefits-calculation-txn-feed-api-client" />
         <module name="benefits-calculation-domain" />
         <module name="benefits-calculation-application" />
-        <module name="benefits-calculation-microservice-ioc" />
+        <module name="benefits-calculation-cross-cutting" />
         <module name="benefits-calculation-ioc" />
       </profile>
     </annotationProcessing>

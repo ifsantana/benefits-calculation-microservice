@@ -5,7 +5,7 @@ import java.util.List;
 import org.example.config.httpserver.HttpServerConfig;
 import org.example.endpoints.Endpoint;
 import org.example.endpoints.v1.RoundUpEndpoint;
-import org.example.endpoints.v1.WebhookEndpoint;
+import org.example.endpoints.v1.webhooks.RoundUpWebhookEndpoint;
 
 public class BenefitsCalculationMicroservice {
   public static void main(String[] args) throws IOException {
@@ -14,6 +14,6 @@ public class BenefitsCalculationMicroservice {
   }
 
   public static List<Endpoint> getPublishedEndpoints() {
-    return List.of(new RoundUpEndpoint(), new WebhookEndpoint());
+    return List.of(new RoundUpEndpoint(), new RoundUpWebhookEndpoint());
   }
 }

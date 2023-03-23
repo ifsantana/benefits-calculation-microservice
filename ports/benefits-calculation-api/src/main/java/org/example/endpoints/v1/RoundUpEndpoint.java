@@ -11,9 +11,10 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.UUID;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -34,6 +35,7 @@ public class RoundUpEndpoint implements Endpoint {
       var feedItems = this.testingGetTxnFeedItems(token, account);
       var savingGoals = this.testingGetSavings(token, account);
       var totalToTransferToGoals = this.calculateRoundUp(feedItems);
+      var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
       exchange.sendResponseHeaders(200, "OK".getBytes().length);
       OutputStream outputStream = exchange.getResponseBody();
       outputStream.write("OK".getBytes());
@@ -102,12 +104,10 @@ public class RoundUpEndpoint implements Endpoint {
         .build();
   }
 
-  public GetSavingGoalsResponse testingGetSavings(String token, AccountResponse accountResponse) throws IOException {
+  public SavingGoal testingGetSavings(String token, AccountResponse accountResponse) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
     HttpUrl httpUrl = this.buildSavingGoalsUrl(accountResponse.accountUid);
     Request request = new Request.Builder()
         .url(httpUrl)
@@ -116,14 +116,15 @@ public class RoundUpEndpoint implements Endpoint {
         .build();
     ResponseBody body = this.client.newCall(request).execute().body();
     try {
-      if(body.bytes().length == 0) {
+      GetSavingGoalsResponse savingGoals = objectMapper.readValue(body.string(), GetSavingGoalsResponse.class);
+
+      if(savingGoals.savingsGoalList().size() == 0) {
        var createdSavingResult = this.testingCreateSaving(token, accountResponse);
        var savingGoal = this.testingGetSavingGoal(token, accountResponse, createdSavingResult.savingsGoalUid);
-       return new GetSavingGoalsResponse(List.of(savingGoal));
-      } else {
-        GetSavingGoalsResponse savingGoals = objectMapper.readValue(body.string(), GetSavingGoalsResponse.class);
-        return savingGoals;
+       return savingGoal;
       }
+
+      return savingGoals.savingsGoalList.stream().min(Comparator.comparingInt(SavingGoal::savedPercentage)).get();
     } catch (IOException e) {
       throw new IOException("reason: ", e);
     }
@@ -133,8 +134,6 @@ public class RoundUpEndpoint implements Endpoint {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
     HttpUrl httpUrl = this.buildSavingGoalByIdUrl(accountResponse.accountUid, savingGoalUid);
     Request request = new Request.Builder()
         .url(httpUrl)
@@ -161,7 +160,7 @@ public class RoundUpEndpoint implements Endpoint {
         .url(httpUrl)
         .addHeader("Accept", "application/json")
         .addHeader("Authorization", token)
-        .put(RequestBody.create(requestBody, MediaType.get("application/json")))
+        .put(RequestBody.create(requestBody, MediaType.parse("application/json")))
         .build();
     ResponseBody body = this.client.newCall(request).execute().body();
     try {
@@ -170,6 +169,31 @@ public class RoundUpEndpoint implements Endpoint {
        */
       CreateSavingGoalResponse savingGoalsResult = objectMapper.readValue(body.string(), CreateSavingGoalResponse.class);
       return savingGoalsResult;
+    } catch (IOException e) {
+      throw new IOException("reason: ", e);
+    }
+  }
+
+  public SavingGoalTransferResponse testingAddMoneyToSaving(String token, AccountResponse accountResponse, SavingGoal savingGoal, Integer amountToAdd) throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+    var topUpRequest = new TopUpRequest(new Amount(savingGoal.totalSaved.currency, amountToAdd));
+    var requestBody = objectMapper.writeValueAsString(topUpRequest);
+    HttpUrl httpUrl = this.buildTopUpSavingUrl(accountResponse.accountUid, savingGoal.savingsGoalUid);
+    Request request = new Request.Builder()
+        .url(httpUrl)
+        .addHeader("Accept", "application/json")
+        .addHeader("Authorization", token)
+        .put(RequestBody.create(requestBody, MediaType.parse("application/json")))
+        .build();
+    ResponseBody body = this.client.newCall(request).execute().body();
+    try {
+      /**
+       * ERROR THROWING HERE
+       */
+      SavingGoalTransferResponse savingGoalTransferResult = objectMapper.readValue(body.string(), SavingGoalTransferResponse.class);
+      return savingGoalTransferResult;
     } catch (IOException e) {
       throw new IOException("reason: ", e);
     }
@@ -184,7 +208,7 @@ public class RoundUpEndpoint implements Endpoint {
         .addPathSegment("v2")
         .addPathSegment("account")
         .addPathSegment(accountUid)
-        .addPathSegment("saving-goals")
+        .addPathSegment("savings-goals")
         .build();
   }
 
@@ -197,8 +221,24 @@ public class RoundUpEndpoint implements Endpoint {
         .addPathSegment("v2")
         .addPathSegment("account")
         .addPathSegment(accountUid)
-        .addPathSegment("saving-goals")
+        .addPathSegment("savings-goals")
         .addPathSegment(savingGoalUid)
+        .build();
+  }
+
+  private HttpUrl buildTopUpSavingUrl(String accountUid, String savingGoalUid) {
+    return new HttpUrl
+        .Builder()
+        .scheme("https")
+        .host("api-sandbox.starlingbank.com")
+        .addPathSegment("api")
+        .addPathSegment("v2")
+        .addPathSegment("account")
+        .addPathSegment(accountUid)
+        .addPathSegment("savings-goals")
+        .addPathSegment(savingGoalUid)
+        .addPathSegment("add-money")
+        .addPathSegment(UUID.randomUUID().toString())
         .build();
   }
 
@@ -222,12 +262,10 @@ public class RoundUpEndpoint implements Endpoint {
    */
   public record Accounts(List<AccountResponse> accounts) implements
       Serializable {
-
   }
 
   public record AccountResponse(String accountUid, String accountType, String defaultCategory, String currency, String createdAt, String name) implements
       Serializable {
-
   }
 
   /**
@@ -254,6 +292,17 @@ public class RoundUpEndpoint implements Endpoint {
   }
 
   public record CreateSavingGoalResponse(String savingsGoalUid, boolean success) implements
+      Serializable {
+  }
+
+  public record SavingGoalTransferResponse(String transferUid, boolean success) implements
+      Serializable {
+  }
+
+  /**
+   * TOPUP
+   */
+  public record TopUpRequest(Amount amount) implements
       Serializable {
   }
 
