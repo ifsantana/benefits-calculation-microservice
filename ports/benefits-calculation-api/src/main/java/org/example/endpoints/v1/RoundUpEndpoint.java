@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -22,6 +21,17 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.example.endpoints.Endpoint;
+import org.example.requests.Amount;
+import org.example.requests.savings.CreateSavingGoalRequest;
+import org.example.requests.savings.TopUpRequest;
+import org.example.responses.accounts.Account;
+import org.example.responses.accounts.AccountsResponse;
+import org.example.responses.savings.CreateSavingGoalResponse;
+import org.example.responses.savings.GetSavingGoalsResponse;
+import org.example.responses.savings.SavingGoal;
+import org.example.responses.savings.SavingGoalTransferResponse;
+import org.example.responses.txnfeed.FeedItem;
+import org.example.responses.txnfeed.FeedItemsResponse;
 
 public class RoundUpEndpoint implements Endpoint {
   private final OkHttpClient client = new OkHttpClient();
@@ -29,26 +39,33 @@ public class RoundUpEndpoint implements Endpoint {
 
   @Override
   public void handle(HttpExchange exchange) throws IOException {
-    if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
-      var token = exchange.getRequestHeaders().get("Authorization").get(0);
-      var account = this.testingGetAccount(token);
-      var feedItems = this.testingGetTxnFeedItems(token, account);
-      var savingGoals = this.testingGetSavings(token, account);
-      var totalToTransferToGoals = this.calculateRoundUp(feedItems);
-      var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
-      exchange.sendResponseHeaders(200, "OK".getBytes().length);
+    if(!exchange.getRequestHeaders().containsKey("Authorization")){
+      exchange.sendResponseHeaders(404, "Forbidden".getBytes().length);
       OutputStream outputStream = exchange.getResponseBody();
-      outputStream.write("OK".getBytes());
+      outputStream.write("Forbidden".getBytes());
       outputStream.close();
     } else {
-      exchange.sendResponseHeaders(405, "Method Not Allowed".getBytes().length);
-      OutputStream outputStream = exchange.getResponseBody();
-      outputStream.write("Method Not Allowed".getBytes());
-      outputStream.close();
+      if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        var token = exchange.getRequestHeaders().get("Authorization").get(0);
+        var account = this.testingGetAccount(token);
+        var feedItems = this.testingGetTxnFeedItems(token, account);
+        var savingGoals = this.testingGetSavings(token, account);
+        var totalToTransferToGoals = this.calculateRoundUp(feedItems);
+        var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
+        exchange.sendResponseHeaders(200, "OK".getBytes().length);
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write("OK".getBytes());
+        outputStream.close();
+      } else {
+        exchange.sendResponseHeaders(405, "Method Not Allowed".getBytes().length);
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write("Method Not Allowed".getBytes());
+        outputStream.close();
+      }
     }
   }
 
-  public AccountResponse testingGetAccount(String token) throws IOException {
+  public Account testingGetAccount(String token) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     Request request = new Request.Builder()
         .url(" https://api-sandbox.starlingbank.com/api/v2/accounts")
@@ -57,8 +74,8 @@ public class RoundUpEndpoint implements Endpoint {
         .build();
     ResponseBody body = this.client.newCall(request).execute().body();
     try {
-      Accounts accountResponse = objectMapper.readValue(body.string(),
-          Accounts.class);
+      AccountsResponse accountResponse = objectMapper.readValue(body.string(),
+          AccountsResponse.class);
 
       return accountResponse.accounts().get(0);
     } catch (IOException e) {
@@ -66,11 +83,11 @@ public class RoundUpEndpoint implements Endpoint {
     }
   }
 
-  public List<FeedItem> testingGetTxnFeedItems(String token, AccountResponse accountResponse) throws IOException {
+  public List<FeedItem> testingGetTxnFeedItems(String token, Account accountResponse) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    HttpUrl httpUrl = this.buildTxnFeedItemsUrl(accountResponse.accountUid);
+    HttpUrl httpUrl = this.buildTxnFeedItemsUrl(accountResponse.accountUid());
     Request request = new Request.Builder()
         .url(httpUrl)
         .addHeader("Accept", "application/json")
@@ -78,10 +95,10 @@ public class RoundUpEndpoint implements Endpoint {
         .build();
     ResponseBody body = this.client.newCall(request).execute().body();
     try {
-      FeedItems feedItems = objectMapper.readValue(body.string(),
-          FeedItems.class);
+      FeedItemsResponse feedItems = objectMapper.readValue(body.string(),
+          FeedItemsResponse.class);
 
-      return feedItems.feedItems.stream().filter(feedItem -> feedItem.direction.equals("OUT")).toList();
+      return feedItems.feedItems().stream().filter(feedItem -> feedItem.direction().equals("OUT")).toList();
     } catch (IOException e) {
       throw new IOException("reason: ", e);
     }
@@ -104,11 +121,11 @@ public class RoundUpEndpoint implements Endpoint {
         .build();
   }
 
-  public SavingGoal testingGetSavings(String token, AccountResponse accountResponse) throws IOException {
+  public SavingGoal testingGetSavings(String token, Account accountResponse) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-    HttpUrl httpUrl = this.buildSavingGoalsUrl(accountResponse.accountUid);
+    HttpUrl httpUrl = this.buildSavingGoalsUrl(accountResponse.accountUid());
     Request request = new Request.Builder()
         .url(httpUrl)
         .addHeader("Accept", "application/json")
@@ -120,21 +137,21 @@ public class RoundUpEndpoint implements Endpoint {
 
       if(savingGoals.savingsGoalList().size() == 0) {
        var createdSavingResult = this.testingCreateSaving(token, accountResponse);
-       var savingGoal = this.testingGetSavingGoal(token, accountResponse, createdSavingResult.savingsGoalUid);
+       var savingGoal = this.testingGetSavingGoal(token, accountResponse, createdSavingResult.savingsGoalUid());
        return savingGoal;
       }
 
-      return savingGoals.savingsGoalList.stream().min(Comparator.comparingInt(SavingGoal::savedPercentage)).get();
+      return savingGoals.savingsGoalList().stream().min(Comparator.comparingInt(SavingGoal::savedPercentage)).get();
     } catch (IOException e) {
       throw new IOException("reason: ", e);
     }
   }
 
-  public SavingGoal testingGetSavingGoal(String token, AccountResponse accountResponse, String savingGoalUid) throws IOException {
+  public SavingGoal testingGetSavingGoal(String token, Account accountResponse, String savingGoalUid) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-    HttpUrl httpUrl = this.buildSavingGoalByIdUrl(accountResponse.accountUid, savingGoalUid);
+    HttpUrl httpUrl = this.buildSavingGoalByIdUrl(accountResponse.accountUid(), savingGoalUid);
     Request request = new Request.Builder()
         .url(httpUrl)
         .addHeader("Accept", "application/json")
@@ -149,13 +166,13 @@ public class RoundUpEndpoint implements Endpoint {
     }
   }
 
-  public CreateSavingGoalResponse testingCreateSaving(String token, AccountResponse accountResponse) throws IOException {
+  public CreateSavingGoalResponse testingCreateSaving(String token, Account accountResponse) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-    var tripToParisGoal = new CreateSavingGoalRequest("Trip to Paris", "GBP", new SavingGoalTarget("GBP", "1000"));
+    var tripToParisGoal = new CreateSavingGoalRequest("Trip to Paris", "GBP", new Amount("GBP", 1000));
     var requestBody = objectMapper.writeValueAsString(tripToParisGoal);
-    HttpUrl httpUrl = this.buildSavingGoalsUrl(accountResponse.accountUid);
+    HttpUrl httpUrl = this.buildSavingGoalsUrl(accountResponse.accountUid());
     Request request = new Request.Builder()
         .url(httpUrl)
         .addHeader("Accept", "application/json")
@@ -174,13 +191,13 @@ public class RoundUpEndpoint implements Endpoint {
     }
   }
 
-  public SavingGoalTransferResponse testingAddMoneyToSaving(String token, AccountResponse accountResponse, SavingGoal savingGoal, Integer amountToAdd) throws IOException {
+  public SavingGoalTransferResponse testingAddMoneyToSaving(String token, Account accountResponse, SavingGoal savingGoal, Integer amountToAdd) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-    var topUpRequest = new TopUpRequest(new Amount(savingGoal.totalSaved.currency, amountToAdd));
+    var topUpRequest = new TopUpRequest(new Amount(savingGoal.totalSaved().currency(), amountToAdd));
     var requestBody = objectMapper.writeValueAsString(topUpRequest);
-    HttpUrl httpUrl = this.buildTopUpSavingUrl(accountResponse.accountUid, savingGoal.savingsGoalUid);
+    HttpUrl httpUrl = this.buildTopUpSavingUrl(accountResponse.accountUid(), savingGoal.savingsGoalUid());
     Request request = new Request.Builder()
         .url(httpUrl)
         .addHeader("Accept", "application/json")
@@ -242,74 +259,10 @@ public class RoundUpEndpoint implements Endpoint {
         .build();
   }
 
-  /**
-   * Feed Items
-   */
-  public record FeedItems(List<FeedItem> feedItems) implements
-      Serializable {
-  }
-
-  public record FeedItem(String feedItemUid, String categoryUid, Amount amount, String direction, String spendingCategory, String country) implements
-      Serializable {
-  }
-
-  public record Amount(String currency, Integer minorUnits) implements
-      Serializable {
-  }
-
-  /**
-   * Accounts
-   */
-  public record Accounts(List<AccountResponse> accounts) implements
-      Serializable {
-  }
-
-  public record AccountResponse(String accountUid, String accountType, String defaultCategory, String currency, String createdAt, String name) implements
-      Serializable {
-  }
-
-  /**
-   * Saving Goal
-   */
-  public record GetSavingGoalsResponse(List<SavingGoal> savingsGoalList) implements
-      Serializable {
-  }
-
-  public record SavingGoal(String savingsGoalUid, String name, SavingGoalTarget target, SavingGoalTotalSaved totalSaved, Integer savedPercentage) implements
-      Serializable {
-  }
-
-  public record SavingGoalTarget(String currency, String minorUnits) implements
-      Serializable {
-  }
-
-  public record SavingGoalTotalSaved(String currency, String minorUnits) implements
-      Serializable {
-  }
-
-  public record CreateSavingGoalRequest(String name, String currency, SavingGoalTarget target) implements
-      Serializable {
-  }
-
-  public record CreateSavingGoalResponse(String savingsGoalUid, boolean success) implements
-      Serializable {
-  }
-
-  public record SavingGoalTransferResponse(String transferUid, boolean success) implements
-      Serializable {
-  }
-
-  /**
-   * TOPUP
-   */
-  public record TopUpRequest(Amount amount) implements
-      Serializable {
-  }
-
   public Integer calculateRoundUp(List<FeedItem> txnList) {
     Double total = Double.MIN_VALUE;
     for(FeedItem item : txnList) {
-      var initValue1 = new BigDecimal(item.amount.minorUnits.toString()).movePointLeft(2);
+      var initValue1 = new BigDecimal(item.amount().minorUnits().toString()).movePointLeft(2);
       var roundup1 = initValue1.round(new MathContext(initValue1.scale(), RoundingMode.UP));
       var roundUpResult = roundup1.subtract(initValue1);
       total += roundUpResult.doubleValue();

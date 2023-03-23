@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import org.example.endpoints.Endpoint;
-import org.example.endpoints.v1.RoundUpEndpoint.FeedItem;
+import org.example.events.AccountHolderWebhookDispatchFeedItem;
 
 public class RoundUpWebhookEndpoint implements Endpoint {
   private ObjectMapper objectMapper = new ObjectMapper();
@@ -34,9 +33,6 @@ public class RoundUpWebhookEndpoint implements Endpoint {
     }
   }
 
-  public record AccountHolderWebhookDispatchFeedItem(String webhookEventUid, String eventTimestamp, String accountHolderUid, FeedItem content) implements
-      Serializable {
-  }
   @Override
   public String getEndpointURN() {
     return ROUND_UP_WEBHOOK_ENDPOINT_URN;
