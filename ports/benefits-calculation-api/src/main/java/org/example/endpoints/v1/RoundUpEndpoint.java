@@ -24,6 +24,7 @@ import org.example.endpoints.Endpoint;
 import org.example.requests.Amount;
 import org.example.requests.savings.CreateSavingGoalRequest;
 import org.example.requests.savings.TopUpRequest;
+import org.example.responses.HttpResponse;
 import org.example.responses.accounts.Account;
 import org.example.responses.accounts.AccountsResponse;
 import org.example.responses.savings.CreateSavingGoalResponse;
@@ -40,27 +41,22 @@ public class RoundUpEndpoint implements Endpoint {
   @Override
   public void handle(HttpExchange exchange) throws IOException {
     if(!exchange.getRequestHeaders().containsKey("Authorization")){
-      exchange.sendResponseHeaders(404, "Forbidden".getBytes().length);
-      OutputStream outputStream = exchange.getResponseBody();
-      outputStream.write("Forbidden".getBytes());
-      outputStream.close();
+      HttpResponse.http404(exchange);
     } else {
       if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
-        var token = exchange.getRequestHeaders().get("Authorization").get(0);
-        var account = this.testingGetAccount(token);
-        var feedItems = this.testingGetTxnFeedItems(token, account);
-        var savingGoals = this.testingGetSavings(token, account);
-        var totalToTransferToGoals = this.calculateRoundUp(feedItems);
-        var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
-        exchange.sendResponseHeaders(200, "OK".getBytes().length);
-        OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write("OK".getBytes());
-        outputStream.close();
+        try {
+          var token = exchange.getRequestHeaders().get("Authorization").get(0);
+          var account = this.testingGetAccount(token);
+          var feedItems = this.testingGetTxnFeedItems(token, account);
+          var savingGoals = this.testingGetSavings(token, account);
+          var totalToTransferToGoals = this.calculateRoundUp(feedItems);
+          var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
+          HttpResponse.http200(exchange);
+        } catch (Exception e) {
+          HttpResponse.http500(exchange);
+        }
       } else {
-        exchange.sendResponseHeaders(405, "Method Not Allowed".getBytes().length);
-        OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write("Method Not Allowed".getBytes());
-        outputStream.close();
+        HttpResponse.http405(exchange);
       }
     }
   }

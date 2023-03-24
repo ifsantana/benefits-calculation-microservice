@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.OutputStream;
 import org.example.endpoints.Endpoint;
 import org.example.events.AccountHolderWebhookDispatchFeedItem;
+import org.example.responses.HttpResponse;
 
 public class RoundUpWebhookEndpoint implements Endpoint {
   private ObjectMapper objectMapper = new ObjectMapper();
@@ -18,18 +18,12 @@ public class RoundUpWebhookEndpoint implements Endpoint {
     if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
       try {
         var body = this.objectMapper.readValue(exchange.getRequestBody(), AccountHolderWebhookDispatchFeedItem.class);
-        exchange.sendResponseHeaders(200, "webhook ok".getBytes().length);
+        HttpResponse.http200(exchange);
       } catch (IOException e) {
         throw new IOException("reason: ", e);
       }
-      OutputStream outputStream = exchange.getResponseBody();
-      outputStream.write("webhook ok".getBytes());
-      outputStream.close();
     } else {
-      exchange.sendResponseHeaders(405, "Method Not Allowed".getBytes().length);
-      OutputStream outputStream = exchange.getResponseBody();
-      outputStream.write("Method Not Allowed".getBytes());
-      outputStream.close();
+      HttpResponse.http405(exchange);
     }
   }
 
