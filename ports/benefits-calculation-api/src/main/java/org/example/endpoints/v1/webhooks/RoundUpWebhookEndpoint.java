@@ -6,7 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import org.example.endpoints.Endpoint;
 import org.example.events.AccountHolderWebhookDispatchFeedItem;
-import org.example.responses.HttpResponse;
+import org.example.responses.HttpResponseWrapper;
 
 public class RoundUpWebhookEndpoint implements Endpoint {
   private ObjectMapper objectMapper = new ObjectMapper();
@@ -18,12 +18,12 @@ public class RoundUpWebhookEndpoint implements Endpoint {
     if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
       try {
         var body = this.objectMapper.readValue(exchange.getRequestBody(), AccountHolderWebhookDispatchFeedItem.class);
-        HttpResponse.http200(exchange);
+        HttpResponseWrapper.http200(exchange);
       } catch (IOException e) {
         throw new IOException("reason: ", e);
       }
     } else {
-      HttpResponse.http405(exchange);
+      HttpResponseWrapper.http405(exchange);
     }
   }
 

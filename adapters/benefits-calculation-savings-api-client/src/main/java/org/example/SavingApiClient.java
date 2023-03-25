@@ -23,7 +23,7 @@ import org.example.responses.savings.GetSavingGoalsResponse;
 import org.example.responses.savings.SavingGoal;
 import org.example.responses.savings.SavingGoalTransferResponse;
 
-public class SavingApiClient implements SavingClient {
+public class SavingApiClient implements SavingServiceClient {
   private final OkHttpClient httpClient;
   private final ObjectMapper mapper;
 

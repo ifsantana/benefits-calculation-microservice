@@ -1,12 +1,11 @@
 package org.example;
 
 import java.io.IOException;
-import org.example.responses.accounts.Account;
 import org.example.responses.savings.CreateSavingGoalResponse;
 import org.example.responses.savings.SavingGoal;
 import org.example.responses.savings.SavingGoalTransferResponse;
 
-public interface SavingClient {
+public interface SavingServiceClient {
 
   /**
    *

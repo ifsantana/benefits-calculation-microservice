@@ -18,7 +18,9 @@ public class BenefitsCalculationMicroservice {
 
   public static List<Endpoint> getPublishedEndpoints() {
     Injector injector = Guice.createInjector(new InjectionManager());
-    var commandHandler = injector.getInstance(RoundUpWeeklyCommandHandler.class);
-    return List.of(new RoundUpEndpoint(commandHandler), new RoundUpWebhookEndpoint());
+    return List.of(
+        new RoundUpEndpoint(injector.getInstance(RoundUpWeeklyCommandHandler.class)),
+        new RoundUpWebhookEndpoint()
+    );
   }
 }

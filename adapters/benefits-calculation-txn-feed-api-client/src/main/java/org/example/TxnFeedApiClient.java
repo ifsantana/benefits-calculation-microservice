@@ -17,7 +17,7 @@ import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.example.responses.txnfeed.FeedItemsResponse;
 
-public class TxnFeedApiClient implements TxnFeedClient {
+public class TxnFeedApiClient implements TxnFeedServiceClient {
   private final OkHttpClient httpClient;
   private final ObjectMapper mapper;
 
@@ -60,6 +60,7 @@ public class TxnFeedApiClient implements TxnFeedClient {
         .host(HOST)
         .addPathSegment(API_PREFIX)
         .addPathSegment(API_V2)
+        .addPathSegment(FEED_RESOURCE_SEGMENT)
         .addPathSegment(ACCOUNT_RESOURCE_SEGMENT)
         .addPathSegment(accountUid)
         .addPathSegment(FEED_SETTLED_TXN_BETWEEN_SEGMENT)

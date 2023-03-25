@@ -3,7 +3,7 @@ package org.example;
 import java.io.IOException;
 import org.example.responses.txnfeed.FeedItemsResponse;
 
-public interface TxnFeedClient {
+public interface TxnFeedServiceClient {
 
   /**
    *

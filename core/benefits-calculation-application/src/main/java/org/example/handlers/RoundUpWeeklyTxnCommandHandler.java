@@ -15,8 +15,7 @@ public class RoundUpWeeklyTxnCommandHandler implements RoundUpWeeklyCommandHandl
   }
 
   @Override
-  public Void handle(String param) throws IOException {
-     this.useCase.execute(param);
-     return null;
+  public Boolean handle(String param) throws IOException {
+      return this.useCase.execute(param);
   }
 }
