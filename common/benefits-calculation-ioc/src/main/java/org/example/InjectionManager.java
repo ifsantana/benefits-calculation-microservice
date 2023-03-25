@@ -1,7 +1,9 @@
 package org.example;
 
 import com.google.inject.AbstractModule;
+import org.example.handlers.RoundUpRealtimeTxnCommandHandler;
 import org.example.handlers.RoundUpWeeklyTxnCommandHandler;
+import org.example.handlers.interfaces.RoundUpRealtimeCommandHandler;
 import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
 import org.example.usecases.roundup.RoundUpRealtimeTxnUseCase;
 import org.example.usecases.roundup.RoundUpWeeklyTxnUseCase;
@@ -23,6 +25,7 @@ public class InjectionManager extends AbstractModule {
 
   private void configureCore() {
     bind(RoundUpWeeklyCommandHandler.class).to(RoundUpWeeklyTxnCommandHandler.class);
+    bind(RoundUpRealtimeCommandHandler.class).to(RoundUpRealtimeTxnCommandHandler.class);
     bind(RoundUpWeeklyUseCase.class).to(RoundUpWeeklyTxnUseCase.class);
     bind(RoundUpRealtimeUseCase.class).to(RoundUpRealtimeTxnUseCase.class);
   }

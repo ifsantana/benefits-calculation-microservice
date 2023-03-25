@@ -30,12 +30,13 @@ public class RoundUpWeeklyTxnUseCase implements RoundUpWeeklyUseCase {
     var account = this.accountsServiceClient.getAccount(token);
     var feedItems = this.txnFeedServiceClient.getTxnFeedItemsByAccountId(token, account.accountUid());
     var savingGoal = this.savingServiceClient.getSavingsByAccountId(token, account.accountUid());
-    var roundUpTotal = this.calculateRoundUp(feedItems.feedItems());
+    var roundUpTotal = this.calculateRoundUpForManyItems(feedItems.feedItems());
     var transactionResult = this.savingServiceClient.addMoneyToSaving(token, account.accountUid(), savingGoal, roundUpTotal);
     return transactionResult.success();
   }
 
-  private Integer calculateRoundUp(List<FeedItem> txnList) {
+  @Override
+  public Integer calculateRoundUpForManyItems(List<FeedItem> txnList) {
     Double total = Double.MIN_VALUE;
     for(FeedItem item : txnList) {
       BigDecimal initValue1;

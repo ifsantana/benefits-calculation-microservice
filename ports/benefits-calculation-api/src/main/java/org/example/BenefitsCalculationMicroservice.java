@@ -8,6 +8,7 @@ import org.example.config.httpserver.HttpServerConfig;
 import org.example.endpoints.Endpoint;
 import org.example.endpoints.v1.RoundUpEndpoint;
 import org.example.endpoints.v1.webhooks.RoundUpWebhookEndpoint;
+import org.example.handlers.interfaces.RoundUpRealtimeCommandHandler;
 import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
 
 public class BenefitsCalculationMicroservice {
@@ -20,7 +21,7 @@ public class BenefitsCalculationMicroservice {
     Injector injector = Guice.createInjector(new InjectionManager());
     return List.of(
         new RoundUpEndpoint(injector.getInstance(RoundUpWeeklyCommandHandler.class)),
-        new RoundUpWebhookEndpoint()
+        new RoundUpWebhookEndpoint(injector.getInstance(RoundUpRealtimeCommandHandler.class))
     );
   }
 }
