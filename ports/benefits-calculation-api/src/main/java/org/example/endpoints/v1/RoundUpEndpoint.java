@@ -2,9 +2,9 @@ package org.example.endpoints.v1;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -21,6 +21,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.example.endpoints.Endpoint;
+import org.example.handlers.CommandHandler;
 import org.example.requests.Amount;
 import org.example.requests.savings.CreateSavingGoalRequest;
 import org.example.requests.savings.TopUpRequest;
@@ -38,6 +39,13 @@ public class RoundUpEndpoint implements Endpoint {
   private final OkHttpClient client = new OkHttpClient();
   private static final String ROUND_UP_ENDPOINT_URN = "/v1/benefits/round-up";
 
+  private final CommandHandler<String, Void> commandHandler;
+
+  @Inject
+  public RoundUpEndpoint(CommandHandler<String, Void> commandHandler) {
+    this.commandHandler = commandHandler;
+  }
+
   @Override
   public void handle(HttpExchange exchange) throws IOException {
     if(!exchange.getRequestHeaders().containsKey("Authorization")){
@@ -45,12 +53,13 @@ public class RoundUpEndpoint implements Endpoint {
     } else {
       if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
         try {
-          var token = exchange.getRequestHeaders().get("Authorization").get(0);
-          var account = this.testingGetAccount(token);
-          var feedItems = this.testingGetTxnFeedItems(token, account);
-          var savingGoals = this.testingGetSavings(token, account);
-          var totalToTransferToGoals = this.calculateRoundUp(feedItems);
-          var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
+          this.commandHandler.handle(exchange.getRequestHeaders().get("Authorization").get(0));
+//          var token = exchange.getRequestHeaders().get("Authorization").get(0);
+//          var account = this.testingGetAccount(token);
+//          var feedItems = this.testingGetTxnFeedItems(token, account);
+//          var savingGoals = this.testingGetSavings(token, account);
+//          var totalToTransferToGoals = this.calculateRoundUp(feedItems);
+//          var transferResult = this.testingAddMoneyToSaving(token, account, savingGoals, totalToTransferToGoals);
           HttpResponse.http200(exchange);
         } catch (Exception e) {
           HttpResponse.http500(exchange);

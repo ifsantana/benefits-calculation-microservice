@@ -16,6 +16,7 @@
     <module>adapters/benefits-calculation-txn-feed-api-client</module>
     <module>core/benefits-calculation-application</module>
     <module>core/benefits-calculation-domain</module>
+    <module>adapters/benefits-calculation-accounts-api-client</module>
   </modules>
 
   <properties>

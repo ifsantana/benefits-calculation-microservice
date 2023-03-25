@@ -13,6 +13,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>5.1.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
       <version>4.10.0</version>
@@ -25,6 +30,12 @@
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>benefits-calculation-cross-cutting</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>benefits-calculation-microservice-ioc</artifactId>
       <version>1.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
