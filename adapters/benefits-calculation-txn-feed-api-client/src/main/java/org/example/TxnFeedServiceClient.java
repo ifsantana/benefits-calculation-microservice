@@ -12,5 +12,5 @@ public interface TxnFeedServiceClient {
    * @return {@link FeedItemsResponse}
    * @throws IOException
    */
-  FeedItemsResponse getTxnFeedItemsByAccountId(String token, String accountUid) throws IOException;
+  FeedItemsResponse getTxnFeedItemsByAccountId(String token, String accountUid, String minTransactionTimestamp, String maxTransactionTimestamp) throws IOException;
 }

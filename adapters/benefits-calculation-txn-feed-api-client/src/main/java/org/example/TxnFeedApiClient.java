@@ -5,9 +5,6 @@ import static org.example.constants.StarlingApiConstants.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
@@ -31,9 +28,9 @@ public class TxnFeedApiClient implements TxnFeedServiceClient {
   }
 
   @Override
-  public FeedItemsResponse getTxnFeedItemsByAccountId(String token, String accountUid)
+  public FeedItemsResponse getTxnFeedItemsByAccountId(String token, String accountUid, String minTransactionTimestamp, String maxTransactionTimestamp)
       throws IOException {
-    HttpUrl httpUrl = this.buildTxnFeedItemsByAccountId(accountUid);
+    HttpUrl httpUrl = this.buildTxnFeedItemsByAccountId(accountUid, minTransactionTimestamp, maxTransactionTimestamp);
     Request request = new Request.Builder()
         .url(httpUrl)
         .addHeader("Accept", "application/json")
@@ -52,8 +49,7 @@ public class TxnFeedApiClient implements TxnFeedServiceClient {
     }
   }
 
-  private HttpUrl buildTxnFeedItemsByAccountId(String accountUid) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+  private HttpUrl buildTxnFeedItemsByAccountId(String accountUid, String minTransactionTimestamp, String maxTransactionTimestamp) {
     return new HttpUrl
         .Builder()
         .scheme(SCHEME)
@@ -64,8 +60,8 @@ public class TxnFeedApiClient implements TxnFeedServiceClient {
         .addPathSegment(ACCOUNT_RESOURCE_SEGMENT)
         .addPathSegment(accountUid)
         .addPathSegment(FEED_SETTLED_TXN_BETWEEN_SEGMENT)
-        .addQueryParameter("minTransactionTimestamp", LocalDateTime.now().minusDays(7L).format(formatter))
-        .addQueryParameter("maxTransactionTimestamp", LocalDateTime.now().format(formatter))
+        .addQueryParameter("minTransactionTimestamp", minTransactionTimestamp)
+        .addQueryParameter("maxTransactionTimestamp", maxTransactionTimestamp)
         .build();
   }
 }

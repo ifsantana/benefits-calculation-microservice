@@ -9,6 +9,7 @@ import java.util.List;
 import org.example.AccountsServiceClient;
 import org.example.SavingServiceClient;
 import org.example.TxnFeedServiceClient;
+import org.example.commands.RoundUpWeeklyCommand;
 import org.example.responses.txnfeed.FeedItem;
 import org.example.usecases.roundup.interfaces.RoundUpWeeklyUseCase;
 
@@ -26,12 +27,13 @@ public class RoundUpWeeklyTxnUseCase implements RoundUpWeeklyUseCase {
   }
 
   @Override
-  public Boolean execute(String token) throws IOException {
-    var account = this.accountsServiceClient.getAccount(token);
-    var feedItems = this.txnFeedServiceClient.getTxnFeedItemsByAccountId(token, account.accountUid());
-    var savingGoal = this.savingServiceClient.getSavingsByAccountId(token, account.accountUid());
+  public Boolean execute(RoundUpWeeklyCommand command) throws IOException {
+    var account = this.accountsServiceClient.getAccount(command.token());
+    var feedItems = this.txnFeedServiceClient.getTxnFeedItemsByAccountId(command.token(), account.accountUid(),
+        command.minTransactionTimestamp(), command.maxTransactionTimestamp());
+    var savingGoal = this.savingServiceClient.getSavingsByAccountId(command.token(), account.accountUid());
     var roundUpTotal = this.calculateRoundUpForManyItems(feedItems.feedItems());
-    var transactionResult = this.savingServiceClient.addMoneyToSaving(token, account.accountUid(), savingGoal, roundUpTotal);
+    var transactionResult = this.savingServiceClient.addMoneyToSaving(command.token(), account.accountUid(), savingGoal, roundUpTotal);
     return transactionResult.success();
   }
 

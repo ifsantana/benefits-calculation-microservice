@@ -2,6 +2,7 @@ package org.example.handlers;
 
 import com.google.inject.Inject;
 import java.io.IOException;
+import org.example.commands.RoundUpWeeklyCommand;
 import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
 import org.example.usecases.roundup.interfaces.RoundUpWeeklyUseCase;
 
@@ -15,7 +16,7 @@ public class RoundUpWeeklyTxnCommandHandler implements RoundUpWeeklyCommandHandl
   }
 
   @Override
-  public Boolean handle(String param) throws IOException {
-      return this.useCase.execute(param);
+  public Boolean handle(RoundUpWeeklyCommand command) throws IOException {
+      return this.useCase.execute(command);
   }
 }

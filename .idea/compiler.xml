@@ -9,6 +9,7 @@
         <module name="benefits-calculation-api" />
         <module name="benefits-calculation-accounts-api-client" />
         <module name="benefits-calculation-savings-api-client" />
+        <module name="benefits-calculation-redis" />
         <module name="benefits-calculation-txn-feed-api-client" />
         <module name="benefits-calculation-domain" />
         <module name="benefits-calculation-application" />

@@ -17,6 +17,7 @@
     <module>core/benefits-calculation-application</module>
     <module>core/benefits-calculation-domain</module>
     <module>adapters/benefits-calculation-accounts-api-client</module>
+    <module>adapters/benefits-calculation-redis</module>
   </modules>
 
   <properties>

@@ -3,6 +3,7 @@ package org.example.constants;
 public class StarlingApiConstants {
   public static final String SCHEME = "https";
   public static final String HOST = "api-sandbox.starlingbank.com";
+
   public static final String API_V1 = "v1";
   public static final String API_V2 = "v2";
   public static final String API_PREFIX = "api";

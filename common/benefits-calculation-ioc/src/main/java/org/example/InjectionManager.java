@@ -1,6 +1,8 @@
 package org.example;
 
 import com.google.inject.AbstractModule;
+import org.example.factories.RoundUpWeeklyCommandFactoryImp;
+import org.example.factories.interfaces.RoundUpWeeklyCommandFactory;
 import org.example.handlers.RoundUpRealtimeTxnCommandHandler;
 import org.example.handlers.RoundUpWeeklyTxnCommandHandler;
 import org.example.handlers.interfaces.RoundUpRealtimeCommandHandler;
@@ -15,6 +17,11 @@ public class InjectionManager extends AbstractModule {
   protected void configure() {
     this.configureAdapters();
     this.configureCore();
+    this.configureCommon();
+  }
+
+  private void configureCommon() {
+    bind(RoundUpWeeklyCommandFactory.class).to(RoundUpWeeklyCommandFactoryImp.class);
   }
 
   private void configureAdapters() {
