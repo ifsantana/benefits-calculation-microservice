@@ -7,6 +7,8 @@ import org.example.handlers.RoundUpRealtimeTxnCommandHandler;
 import org.example.handlers.RoundUpWeeklyTxnCommandHandler;
 import org.example.handlers.interfaces.RoundUpRealtimeCommandHandler;
 import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
+import org.example.repositories.RoundUpExecutionCacheRepositoryImp;
+import org.example.repositories.interfaces.RoundUpExecutionCacheRepository;
 import org.example.usecases.roundup.RoundUpRealtimeTxnUseCase;
 import org.example.usecases.roundup.RoundUpWeeklyTxnUseCase;
 import org.example.usecases.roundup.interfaces.RoundUpRealtimeUseCase;
@@ -28,6 +30,7 @@ public class InjectionManager extends AbstractModule {
     bind(AccountsServiceClient.class).to(AccountApiClient.class);
     bind(SavingServiceClient.class).to(SavingApiClient.class);
     bind(TxnFeedServiceClient.class).to(TxnFeedApiClient.class);
+    bind(RoundUpExecutionCacheRepository.class).to(RoundUpExecutionCacheRepositoryImp.class);
   }
 
   private void configureCore() {

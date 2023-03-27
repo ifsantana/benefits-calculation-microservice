@@ -3,6 +3,8 @@ package org.example.endpoints.v1;
 import com.google.inject.Inject;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashMap;
 import kotlin.Pair;
 import org.example.commands.RoundUpWeeklyCommand;
@@ -13,6 +15,8 @@ import org.example.responses.HttpResponseWrapper;
 
 public class RoundUpEndpoint implements Endpoint {
   private static final String ROUND_UP_ENDPOINT_URN = "/v1/benefits/round-up";
+  private static final String MIN_TXN_TIMESTAMP = "minTransactionTimestamp";
+  private static final String MAX_TXN_TIMESTAMP = "maxTransactionTimestamp";
   private final CommandHandler<RoundUpWeeklyCommand, Boolean> commandHandler;
   private final Factory<RoundUpWeeklyCommand, Pair<String, HashMap<String, String>>> commandFactory;
   @Inject
@@ -32,6 +36,7 @@ public class RoundUpEndpoint implements Endpoint {
           var params = this.queryToMap(exchange.getRequestURI().getQuery());
           var command = this.commandFactory.create(new Pair<>(exchange.getRequestHeaders().getFirst("Authorization"), params));
           var success = this.commandHandler.handle(command);
+
           if(success)
             HttpResponseWrapper.http200(exchange);
           else

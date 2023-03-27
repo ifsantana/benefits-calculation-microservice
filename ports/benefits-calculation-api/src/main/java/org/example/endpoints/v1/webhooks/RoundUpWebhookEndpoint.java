@@ -26,7 +26,6 @@ public class RoundUpWebhookEndpoint implements Endpoint {
   public void handle(HttpExchange exchange) throws IOException {
     if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
       try {
-        var token = exchange.getRequestHeaders().getFirst("Authorization");
         var event = this.objectMapper.readValue(exchange.getRequestBody(), AccountHolderWebhookDispatchFeedItem.class);
         var success = this.commandHandler.handle(event);
         if(success)

@@ -50,6 +50,18 @@ public class HttpResponseWrapper {
    * @param - exchange
    * @throws IOException
    */
+  public static void http422(HttpExchange exchange) throws IOException {
+    exchange.sendResponseHeaders(422, "Unprocessable Content".getBytes().length);
+    OutputStream outputStream = exchange.getResponseBody();
+    outputStream.write("Unprocessable Content".getBytes());
+    outputStream.close();
+  }
+
+  /**
+   *
+   * @param - exchange
+   * @throws IOException
+   */
   public static void http500(HttpExchange exchange) throws IOException {
     exchange.sendResponseHeaders(500, "Something Went Wrong...".getBytes().length);
     OutputStream outputStream = exchange.getResponseBody();
