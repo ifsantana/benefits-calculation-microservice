@@ -1,6 +1,5 @@
 package org.example.usecases.roundup.interfaces;
 
-import java.util.List;
 import org.example.events.AccountHolderWebhookDispatchFeedItem;
 import org.example.responses.txnfeed.FeedItem;
 

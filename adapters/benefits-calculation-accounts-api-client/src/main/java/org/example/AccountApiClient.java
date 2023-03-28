@@ -15,6 +15,7 @@ import org.example.responses.accounts.Account;
 import org.example.responses.accounts.AccountsResponse;
 
 public class AccountApiClient implements AccountsServiceClient {
+
   private final OkHttpClient httpClient;
   private final ObjectMapper mapper;
 

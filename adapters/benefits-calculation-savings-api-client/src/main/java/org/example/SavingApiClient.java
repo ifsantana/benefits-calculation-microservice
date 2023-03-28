@@ -24,6 +24,7 @@ import org.example.responses.savings.SavingGoal;
 import org.example.responses.savings.SavingGoalTransferResponse;
 
 public class SavingApiClient implements SavingServiceClient {
+
   private final OkHttpClient httpClient;
   private final ObjectMapper mapper;
 
@@ -46,15 +47,18 @@ public class SavingApiClient implements SavingServiceClient {
         .build();
     ResponseBody body = this.httpClient.newCall(request).execute().body();
     try {
-      GetSavingGoalsResponse savingGoals = mapper.readValue(body.string(), GetSavingGoalsResponse.class);
+      GetSavingGoalsResponse savingGoals = mapper.readValue(body.string(),
+          GetSavingGoalsResponse.class);
 
-      if(savingGoals.savingsGoalList().size() == 0) {
+      if (savingGoals.savingsGoalList().size() == 0) {
         var createdSavingResult = this.createSaving(token, accountUid);
-        var savingGoal = this.getSavingGoal(token, accountUid, createdSavingResult.savingsGoalUid());
+        var savingGoal = this.getSavingGoal(token, accountUid,
+            createdSavingResult.savingsGoalUid());
         return savingGoal;
       }
 
-      return savingGoals.savingsGoalList().stream().min(Comparator.comparingInt(SavingGoal::savedPercentage)).get();
+      return savingGoals.savingsGoalList().stream()
+          .min(Comparator.comparingInt(SavingGoal::savedPercentage)).get();
     } catch (IOException e) {
       throw new IOException("reason: ", e);
     }
@@ -80,7 +84,8 @@ public class SavingApiClient implements SavingServiceClient {
 
   @Override
   public CreateSavingGoalResponse createSaving(String token, String accountUid) throws IOException {
-    var tripToParisGoal = new CreateSavingGoalRequest("Trip to Paris", "GBP", new Amount("GBP", 1000));
+    var tripToParisGoal = new CreateSavingGoalRequest("Trip to Paris", "GBP",
+        new Amount("GBP", 1000));
     var requestBody = mapper.writeValueAsString(tripToParisGoal);
     HttpUrl httpUrl = this.buildSavingGoalsUrl(accountUid);
     Request request = new Request.Builder()
@@ -94,7 +99,8 @@ public class SavingApiClient implements SavingServiceClient {
       /**
        * ERROR THROWING HERE
        */
-      CreateSavingGoalResponse savingGoalsResult = mapper.readValue(body.string(), CreateSavingGoalResponse.class);
+      CreateSavingGoalResponse savingGoalsResult = mapper.readValue(body.string(),
+          CreateSavingGoalResponse.class);
       return savingGoalsResult;
     } catch (IOException e) {
       throw new IOException("reason: ", e);
@@ -104,7 +110,8 @@ public class SavingApiClient implements SavingServiceClient {
   @Override
   public SavingGoalTransferResponse addMoneyToSaving(String token, String accountUid,
       SavingGoal savingGoal, Integer amountToAdd) throws IOException {
-    var topUpRequest = new TopUpRequest(new Amount(savingGoal.totalSaved().currency(), amountToAdd));
+    var topUpRequest = new TopUpRequest(
+        new Amount(savingGoal.totalSaved().currency(), amountToAdd));
     var requestBody = this.mapper.writeValueAsString(topUpRequest);
     HttpUrl httpUrl = this.buildTopUpSavingUrl(accountUid, savingGoal.savingsGoalUid());
     Request request = new Request.Builder()
@@ -115,7 +122,8 @@ public class SavingApiClient implements SavingServiceClient {
         .build();
     ResponseBody body = this.httpClient.newCall(request).execute().body();
     try {
-      SavingGoalTransferResponse savingGoalTransferResult = this.mapper.readValue(body.string(), SavingGoalTransferResponse.class);
+      SavingGoalTransferResponse savingGoalTransferResult = this.mapper.readValue(body.string(),
+          SavingGoalTransferResponse.class);
       return savingGoalTransferResult;
     } catch (IOException e) {
       throw new IOException("reason: ", e);
