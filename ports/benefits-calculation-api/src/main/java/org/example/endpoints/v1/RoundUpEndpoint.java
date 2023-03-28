@@ -9,7 +9,6 @@ import org.example.commands.RoundUpWeeklyCommand;
 import org.example.endpoints.Endpoint;
 import org.example.factories.interfaces.Factory;
 import org.example.handlers.CommandHandler;
-import org.example.responses.HttpResponse;
 import org.example.responses.HttpResponseWrapper;
 
 public class RoundUpEndpoint implements Endpoint {
@@ -35,7 +34,7 @@ public class RoundUpEndpoint implements Endpoint {
           var command = this.commandFactory.create(new Pair<>(token, params));
           var success = this.commandHandler.handle(command);
 
-          if(success.component1())
+          if(Boolean.TRUE.equals(success.component1()))
             HttpResponseWrapper.http200(exchange);
           else
             HttpResponseWrapper.http422(exchange, success.component2());
