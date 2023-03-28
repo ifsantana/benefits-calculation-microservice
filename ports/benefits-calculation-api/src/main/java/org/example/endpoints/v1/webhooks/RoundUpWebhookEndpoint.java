@@ -26,14 +26,17 @@ public class RoundUpWebhookEndpoint implements Endpoint {
   public void handle(HttpExchange exchange) throws IOException {
     if(exchange.getRequestMethod().equalsIgnoreCase("POST")) {
       try {
+        /**
+         * 1 - get authorizationid: https://oauth-sandbox.starlingbank.com/partner-developer/api/v1/available-application/ahO9mdmqPi5WPeO9P7Xa/qr-code
+         * 2 - get code: https://developer.starlingbank.com/partner-developer/api/v1/application-authorisation/ce0a2adb-cb42-4a75-a7a4-d33986cd4d1e get code on redirect url
+         * 3 - get token: https://api-sandbox.starlingbank.com/oauth/access-token
+         */
         var event = this.objectMapper.readValue(exchange.getRequestBody(), AccountHolderWebhookDispatchFeedItem.class);
         var success = this.commandHandler.handle(event);
         if(success)
           HttpResponseWrapper.http200(exchange);
-        else
-          HttpResponseWrapper.http500(exchange);
       } catch (IOException e) {
-        throw new IOException("reason: ", e);
+        HttpResponseWrapper.http500(exchange, e.getMessage());
       }
     } else {
       HttpResponseWrapper.http405(exchange);

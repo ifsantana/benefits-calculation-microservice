@@ -5,19 +5,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class HttpResponseWrapper {
-  private HttpResponseWrapper() {
-
-  }
+  private HttpResponseWrapper() {}
 
   /**
    *
    * @param - exchange
+   * @param - httpResponse
    * @throws IOException
    */
-  public static void http200(HttpExchange exchange) throws IOException {
-    exchange.sendResponseHeaders(200, "OK".getBytes().length);
+  public static void httpResponse(HttpExchange exchange, HttpResponse httpResponse) throws IOException  {
+    exchange.sendResponseHeaders(httpResponse.code(), httpResponse.message().getBytes().length);
     OutputStream outputStream = exchange.getResponseBody();
-    outputStream.write("OK".getBytes());
+    outputStream.write(httpResponse.message().getBytes());
     outputStream.close();
   }
 
@@ -27,10 +26,16 @@ public class HttpResponseWrapper {
    * @throws IOException
    */
   public static void http404(HttpExchange exchange) throws IOException {
-    exchange.sendResponseHeaders(404, "Forbidden".getBytes().length);
-    OutputStream outputStream = exchange.getResponseBody();
-    outputStream.write("Forbidden".getBytes());
-    outputStream.close();
+    httpResponse(exchange, new HttpResponse(404, "Forbidden"));
+  }
+
+  /**
+   *
+   * @param - exchange
+   * @throws IOException
+   */
+  public static void http200(HttpExchange exchange) throws IOException {
+    httpResponse(exchange, new HttpResponse(200, "OK"));
   }
 
   /**
@@ -39,10 +44,7 @@ public class HttpResponseWrapper {
    * @throws IOException
    */
   public static void http405(HttpExchange exchange) throws IOException {
-    exchange.sendResponseHeaders(405, "Method Not Allowed".getBytes().length);
-    OutputStream outputStream = exchange.getResponseBody();
-    outputStream.write("Method Not Allowed".getBytes());
-    outputStream.close();
+    httpResponse(exchange, new HttpResponse(405, "Method Not Allowed"));
   }
 
   /**
@@ -50,11 +52,8 @@ public class HttpResponseWrapper {
    * @param - exchange
    * @throws IOException
    */
-  public static void http422(HttpExchange exchange) throws IOException {
-    exchange.sendResponseHeaders(422, "Unprocessable Content".getBytes().length);
-    OutputStream outputStream = exchange.getResponseBody();
-    outputStream.write("Unprocessable Content".getBytes());
-    outputStream.close();
+  public static void http422(HttpExchange exchange, String message) throws IOException {
+    httpResponse(exchange, new HttpResponse(422, message));
   }
 
   /**
@@ -62,10 +61,7 @@ public class HttpResponseWrapper {
    * @param - exchange
    * @throws IOException
    */
-  public static void http500(HttpExchange exchange) throws IOException {
-    exchange.sendResponseHeaders(500, "Something Went Wrong...".getBytes().length);
-    OutputStream outputStream = exchange.getResponseBody();
-    outputStream.write("Something Went Wrong...".getBytes());
-    outputStream.close();
+  public static void http500(HttpExchange exchange, String message) throws IOException {
+    httpResponse(exchange, new HttpResponse(500, message));
   }
 }

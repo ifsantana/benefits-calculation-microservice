@@ -2,11 +2,12 @@ package org.example.usecases.roundup.interfaces;
 
 import java.io.IOException;
 import java.util.List;
+import kotlin.Pair;
 import org.example.commands.RoundUpWeeklyCommand;
 import org.example.responses.txnfeed.FeedItem;
 
 public interface RoundUpWeeklyUseCase {
-  Boolean execute(RoundUpWeeklyCommand command) throws IOException;
+  Pair<Boolean, String> execute(RoundUpWeeklyCommand command) throws IOException;
 
   /**
    *

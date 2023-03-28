@@ -16,10 +16,10 @@ public class RoundUpRealtimeTxnUseCase implements RoundUpRealtimeUseCase {
 
   @Override
   public Integer calculateRoundUp(FeedItem feedTxn) {
-    BigDecimal initValue1;
-    initValue1 = new BigDecimal(feedTxn.amount().minorUnits().toString()).movePointLeft(2);
-    var roundup1 = initValue1.round(new MathContext(initValue1.scale(), RoundingMode.UP));
-    var roundUpResult = roundup1.subtract(initValue1);
+    BigDecimal txnValue;
+    txnValue = new BigDecimal(feedTxn.amount().minorUnits().toString()).movePointLeft(2);
+    var roundedUpDiffValue = txnValue.round(new MathContext(txnValue.scale(), RoundingMode.UP));
+    var roundUpResult = roundedUpDiffValue.subtract(txnValue);
     Double result = roundUpResult.doubleValue()*100;
     return  result.intValue();
   }
