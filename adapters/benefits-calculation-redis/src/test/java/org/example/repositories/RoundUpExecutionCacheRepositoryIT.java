@@ -44,5 +44,9 @@ class RoundUpExecutionCacheRepositoryIT {
     var result = this.cacheRepository.getLastProcessedTransactionsDayByUserId("12345");
     assertThat(result).isNotNull();
     assertThat(result).isEqualTo("2023-03-15T12:48:00.000Z");
+    this.cacheRepository.upsertLastProcessedTransactionDayByUserId("12345", "2023-03-16T12:48:00.000Z");
+    var updatedResult = this.cacheRepository.getLastProcessedTransactionsDayByUserId("12345");
+    assertThat(updatedResult).isNotNull();
+    assertThat(updatedResult).isEqualTo("2023-03-16T12:48:00.000Z");
   }
 }
