@@ -19,6 +19,8 @@
     <file url="file://$PROJECT_DIR$/core/benefits-calculation-domain/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ports/benefits-calculation-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ports/benefits-calculation-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ports/benefits-calculation-event-consumers/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ports/benefits-calculation-event-consumers/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

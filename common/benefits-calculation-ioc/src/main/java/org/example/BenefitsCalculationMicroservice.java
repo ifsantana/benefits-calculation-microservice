@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.List;
 import org.example.endpoints.Endpoint;
 import org.example.endpoints.v1.RoundUpEndpoint;
-import org.example.endpoints.v1.webhooks.RoundUpWebhookEndpoint;
 import org.example.factories.interfaces.RoundUpWeeklyCommandFactory;
 import org.example.handlers.interfaces.RoundUpRealtimeCommandHandler;
 import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
 import org.example.httpserver.HttpServerConfig;
+import org.example.webhooks.RoundUpWebhookEndpoint;
 
 public class BenefitsCalculationMicroservice {
 

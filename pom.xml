@@ -18,6 +18,7 @@
     <module>core/benefits-calculation-domain</module>
     <module>adapters/benefits-calculation-accounts-api-client</module>
     <module>adapters/benefits-calculation-redis</module>
+    <module>ports/benefits-calculation-event-consumers</module>
   </modules>
 
   <properties>

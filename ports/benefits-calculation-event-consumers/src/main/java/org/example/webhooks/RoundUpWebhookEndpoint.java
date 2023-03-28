@@ -1,4 +1,4 @@
-package org.example.endpoints.v1.webhooks;
+package org.example.webhooks;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

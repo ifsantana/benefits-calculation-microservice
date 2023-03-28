@@ -12,9 +12,9 @@ public interface Endpoint extends HttpHandler {
   String getEndpointURN();
 
   /**
-   *
+   *  Extract query parameters from URL to HashMap.
    * @param - query
-   * @return
+   * @return {@link HashMap<String, String>} containing query string parameters extracted from URL.
    */
   default HashMap<String, String> queryToMap(String query) {
     if(query == null) {

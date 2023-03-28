@@ -8,7 +8,7 @@ import org.example.responses.savings.SavingGoalTransferResponse;
 public interface SavingServiceClient {
 
   /**
-   *
+   * This method consumes saving goals api and get all saving goals by account id.
    * @param - token
    * @param - accountUid
    * @return {@link SavingGoal}
@@ -17,7 +17,7 @@ public interface SavingServiceClient {
   SavingGoal getSavingsByAccountId(String token, String accountUid) throws IOException;
 
   /**
-   *
+   * This method consumes saving goals api and get an specific saving goal by account id and saving goal id.
    * @param - token
    * @param - accountUid
    * @param - savingGoalUid
@@ -28,7 +28,7 @@ public interface SavingServiceClient {
       throws IOException;
 
   /**
-   *
+   * This method consumes saving goals api and performs a saving goal creation for a specific account id.
    * @param - token
    * @param - accountUid
    * @return {@link CreateSavingGoalResponse}
@@ -37,7 +37,7 @@ public interface SavingServiceClient {
   CreateSavingGoalResponse createSaving(String token, String accountUid) throws IOException;
 
   /**
-   *
+   * This method consumes saving goals api and add money for an specific saving goal.
    * @param - token
    * @param - accountResponse
    * @param - savingGoal

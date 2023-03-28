@@ -16,7 +16,6 @@ import org.example.SavingServiceClient;
 import org.example.TxnFeedServiceClient;
 import org.example.commands.RoundUpWeeklyCommand;
 import org.example.repositories.interfaces.RoundUpExecutionCacheRepository;
-import org.example.responses.HttpResponse;
 import org.example.responses.txnfeed.FeedItem;
 import org.example.usecases.roundup.interfaces.RoundUpWeeklyUseCase;
 
