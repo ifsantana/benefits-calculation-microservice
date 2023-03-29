@@ -64,4 +64,13 @@ public class HttpResponseWrapper {
   public static void http500(HttpExchange exchange, String message) throws IOException {
     httpResponse(exchange, new HttpResponse(500, message));
   }
+
+  /**
+   * This method handles standard 400 HttpResponse.
+   * @param - exchange
+   * @throws IOException
+   */
+  public static void http400(HttpExchange exchange) throws IOException {
+    httpResponse(exchange, new HttpResponse(400, "Bad Request"));
+  }
 }

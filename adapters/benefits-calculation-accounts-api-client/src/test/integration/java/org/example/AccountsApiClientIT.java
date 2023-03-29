@@ -4,6 +4,8 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import net.bytebuddy.description.type.TypeList.Generic;
+import org.example.builders.GenericBuilder;
 import org.example.responses.accounts.Account;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

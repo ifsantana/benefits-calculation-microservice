@@ -8,16 +8,18 @@ import kotlin.Pair;
 import org.example.commands.RoundUpWeeklyCommand;
 import org.example.endpoints.Endpoint;
 import org.example.factories.interfaces.Factory;
+import org.example.factories.interfaces.RoundUpWeeklyCommandFactory;
 import org.example.handlers.CommandHandler;
+import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
 import org.example.responses.HttpResponseWrapper;
 
 public class RoundUpEndpoint implements Endpoint {
   private static final String ROUND_UP_ENDPOINT_URN = "/v1/benefits/round-up";
-  private final CommandHandler<RoundUpWeeklyCommand, Pair<Boolean, String>> commandHandler;
-  private final Factory<RoundUpWeeklyCommand, Pair<String, HashMap<String, String>>> commandFactory;
+  private final RoundUpWeeklyCommandHandler commandHandler;
+  private final RoundUpWeeklyCommandFactory commandFactory;
   @Inject
-  public RoundUpEndpoint(CommandHandler<RoundUpWeeklyCommand, Pair<Boolean, String>> commandHandler,
-      Factory<RoundUpWeeklyCommand, Pair<String, HashMap<String, String>>> commandFactory) {
+  public RoundUpEndpoint(RoundUpWeeklyCommandHandler commandHandler,
+      RoundUpWeeklyCommandFactory commandFactory) {
     this.commandHandler = commandHandler;
     this.commandFactory = commandFactory;
   }
@@ -31,6 +33,8 @@ public class RoundUpEndpoint implements Endpoint {
         try {
           var token = exchange.getRequestHeaders().getFirst("Authorization");
           var params = this.queryToMap(exchange.getRequestURI().getQuery());
+          if(params.isEmpty())
+            HttpResponseWrapper.http400(exchange);
           var command = this.commandFactory.create(new Pair<>(token, params));
           var success = this.commandHandler.handle(command);
 

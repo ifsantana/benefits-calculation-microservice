@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class RoundUpWeeklyTxnUseCaseTest {
+
   @InjectMocks
   private RoundUpWeeklyTxnUseCase useCase;
   private List<FeedItem> txnFeedItems;
@@ -23,6 +24,11 @@ class RoundUpWeeklyTxnUseCaseTest {
     this.txnFeedItems = buildTxnFeed();
   }
 
+  /**
+   * UseCase: For a customer, take all the transactions in a given week and round them up to the
+   * nearest pound. For example with spending of £4.35, £5.20 and £0.87, the round-up would be
+   * £1.58.
+   */
   @Test
   void shouldCalculateRoundUpCorrectly() {
     var result = this.useCase.calculateRoundUpForManyItems(this.txnFeedItems);
