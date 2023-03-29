@@ -8,33 +8,21 @@
 
 * **IDE - IntelliJ Idea**
 
-Menu -> Run -> Edit Configurations...
-
-Click in "+" button and Add New Configuration -> "Application" type
-
-Set "Name": run
-
-Set "Main Class": org.example.BenefitsCalculationMicroservice
-
-Set "Use class module": benefits-calculation-ioc
-
-Use JRE 17
-
-Click on "Apply" to save changes
-
-Select "run" configuration and click on "run" button
+  * Menu -> Run -> Edit Configurations...
+  * Click in "+" button and Add New Configuration -> "Application" type
+  * Set "Name": run
+  * Set "Main Class": org.example.BenefitsCalculationMicroservice
+  * Set "Use class module": benefits-calculation-ioc
+  * Use JRE 17 
+  * Click on "Apply" to save changes 
+  * Select "run" configuration and click on "run" button
 
 How to run tests
 
 * **IDE - IntelliJ Idea**
-Menu -> Run -> Edit Configurations...
-
-Click in "+" button and Add New Configuration -> "JUnit" type
-
-Set "Name": run all tests
-
-Set "Test Kind": All in package
-
-Click on "Apply" to save changes
-
-Select "run all tests" configuration and click on "run" button
+  * Menu -> Run -> Edit Configurations...
+  * Click in "+" button and Add New Configuration -> "JUnit" type
+  * Set "Name": run all tests
+  * Set "Test Kind": All in package
+  * Click on "Apply" to save changes
+  * Select "run all tests" configuration and click on "run" button
