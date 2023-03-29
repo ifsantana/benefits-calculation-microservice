@@ -15,5 +15,5 @@ Take all the transactions in a given week and round them up to the nearest pound
 ### Response
 
 ```json
-
+"OK"
 ```
