@@ -12,6 +12,9 @@ Take all the transactions in a given week and round them up to the nearest pound
 
 `POST` -> `v1/benefits/round-up?minTransactionTimestamp=2023-03-27T00:00:00.000Z&maxTransactionTimestamp=2023-03-28T12:48:00.000Z`
 
+* Headers
+  * `Authorization`: `Bearer {token}`
+
 ### Response
 
 ```json
