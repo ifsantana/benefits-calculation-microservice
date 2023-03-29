@@ -17,14 +17,14 @@ To make this work, the key parts from our public API you will need are:
 2. **Transaction feed** - To retrieve transactions for the customer
 3. **Savings Goals** - Create a savings goals and transfer money to savings goals
 
-**Decision**:
+* **Decision**:
 
 Given the challenge I decided to design the solution using as reference the **_Hexagonal (Ports and
 Adapters) Architecture_**.
 
 Here are some PROS on using this kinda of architectural/design approach:
 
-**Testability**
+* **Testability**
 
 * The main benefit this architecture provides is the ability of testing the application in
   isolation from external devices it depends on. This is achieved by doing two things:
@@ -59,7 +59,7 @@ Here are some PROS on using this kinda of architectural/design approach:
         * System Tests: For testing the whole system, adapters and the hexagon together. They also
           test system deployment and startup.
 
-**Maintainability**
+* **Maintainability**
 
 * Maintainable systems are those who are easy to modify. Hexagonal Architecture increases
   maintainability, because it provides separation of concerns and business logic decoupling,
