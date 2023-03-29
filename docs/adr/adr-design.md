@@ -114,7 +114,7 @@ Here are some PROS on using this kinda of architectural/design approach:
             * Cross Cutting
                 * All common artifacts used by the application.
             * Cross Cutting IoC
-                * Layer responsible for control dependency inversion.
+                * Layer responsible for inversion of control (handle the dependency injection).
         * Core - Domain and Business Logic
             * Application
                 * Module Responsible for to isolate the applications use cases and to abstract the
