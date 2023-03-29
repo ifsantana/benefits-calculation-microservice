@@ -28,7 +28,7 @@ public class InjectionManager extends AbstractModule {
 
   private void configureAdapters() {
     bind(AccountsServiceClient.class).to(AccountApiClient.class);
-    bind(SavingServiceClient.class).to(SavingApiClient.class);
+    bind(SavingGoalsServiceClient.class).to(SavingGoalsApiClient.class);
     bind(TxnFeedServiceClient.class).to(TxnFeedApiClient.class);
     bind(RoundUpExecutionCacheRepository.class).to(RoundUpExecutionCacheRepositoryImp.class);
   }

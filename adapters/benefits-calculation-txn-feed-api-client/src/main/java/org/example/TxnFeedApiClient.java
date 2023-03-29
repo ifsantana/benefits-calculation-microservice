@@ -13,8 +13,11 @@ import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.example.responses.txnfeed.FeedItemsResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TxnFeedApiClient implements TxnFeedServiceClient {
+  private static final Logger logger = LoggerFactory.getLogger(TxnFeedApiClient.class);
   private final OkHttpClient httpClient;
   private final ObjectMapper mapper;
 
@@ -45,23 +48,8 @@ public class TxnFeedApiClient implements TxnFeedServiceClient {
       }
       return null;
     } catch (IOException e) {
-      throw new IOException("reason: ", e);
+      logger.error("error retrieving settled transactions for a date range: ", e);
+      return null;
     }
-  }
-
-  private HttpUrl buildTxnFeedItemsByAccountId(String accountUid, String minTransactionTimestamp, String maxTransactionTimestamp) {
-    return new HttpUrl
-        .Builder()
-        .scheme(SCHEME)
-        .host(HOST)
-        .addPathSegment(API_PREFIX)
-        .addPathSegment(API_V2)
-        .addPathSegment(FEED_RESOURCE_SEGMENT)
-        .addPathSegment(ACCOUNT_RESOURCE_SEGMENT)
-        .addPathSegment(accountUid)
-        .addPathSegment(FEED_SETTLED_TXN_BETWEEN_SEGMENT)
-        .addQueryParameter("minTransactionTimestamp", minTransactionTimestamp)
-        .addQueryParameter("maxTransactionTimestamp", maxTransactionTimestamp)
-        .build();
   }
 }

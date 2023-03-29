@@ -1,12 +1,10 @@
 package org.example;
 
-import static org.example.constants.StarlingApiConstants.*;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -22,13 +20,15 @@ import org.example.responses.savings.CreateSavingGoalResponse;
 import org.example.responses.savings.GetSavingGoalsResponse;
 import org.example.responses.savings.SavingGoal;
 import org.example.responses.savings.SavingGoalTransferResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class SavingApiClient implements SavingServiceClient {
-
+public class SavingGoalsApiClient implements SavingGoalsServiceClient {
+  private static final Logger logger = LoggerFactory.getLogger(SavingGoalsApiClient.class);
   private final OkHttpClient httpClient;
   private final ObjectMapper mapper;
 
-  public SavingApiClient() {
+  public SavingGoalsApiClient() {
     this.httpClient = new Builder()
         .readTimeout(2, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
@@ -50,17 +50,16 @@ public class SavingApiClient implements SavingServiceClient {
       GetSavingGoalsResponse savingGoals = mapper.readValue(body.string(),
           GetSavingGoalsResponse.class);
 
-      if (savingGoals.savingsGoalList().size() == 0) {
-        var createdSavingResult = this.createSaving(token, accountUid);
-        var savingGoal = this.getSavingGoal(token, accountUid,
-            createdSavingResult.savingsGoalUid());
-        return savingGoal;
+      if (savingGoals.savingsGoalList().isEmpty()) {
+        var createdSavingResult = this.createSavingGoal(token, accountUid);
+        return this.getSavingGoal(token, accountUid, createdSavingResult.savingsGoalUid());
       }
 
-      return savingGoals.savingsGoalList().stream()
-          .min(Comparator.comparingInt(SavingGoal::savedPercentage)).get();
+      return Optional.of(savingGoals.savingsGoalList().stream()
+          .min(Comparator.comparingInt(SavingGoal::savedPercentage))).get().orElse(null);
     } catch (IOException e) {
-      throw new IOException("reason: ", e);
+      logger.error("error retrieving saving goals: ", e);
+      return null;
     }
   }
 
@@ -75,16 +74,16 @@ public class SavingApiClient implements SavingServiceClient {
         .build();
     ResponseBody body = this.httpClient.newCall(request).execute().body();
     try {
-      SavingGoal savingGoal = mapper.readValue(body.string(), SavingGoal.class);
-      return savingGoal;
+      return mapper.readValue(body.string(), SavingGoal.class);
     } catch (IOException e) {
-      throw new IOException("reason: ", e);
+      logger.error("error retrieving saving goal: ", e);
+      return null;
     }
   }
 
   @Override
-  public CreateSavingGoalResponse createSaving(String token, String accountUid) throws IOException {
-    var tripToParisGoal = new CreateSavingGoalRequest("Trip to Paris", "GBP",
+  public CreateSavingGoalResponse createSavingGoal(String token, String accountUid) throws IOException {
+    var tripToParisGoal = new CreateSavingGoalRequest("Dream Trip", "GBP",
         new Amount("GBP", 1000));
     var requestBody = mapper.writeValueAsString(tripToParisGoal);
     HttpUrl httpUrl = this.buildSavingGoalsUrl(accountUid);
@@ -96,19 +95,15 @@ public class SavingApiClient implements SavingServiceClient {
         .build();
     ResponseBody body = this.httpClient.newCall(request).execute().body();
     try {
-      /**
-       * ERROR THROWING HERE
-       */
-      CreateSavingGoalResponse savingGoalsResult = mapper.readValue(body.string(),
-          CreateSavingGoalResponse.class);
-      return savingGoalsResult;
+      return mapper.readValue(body.string(), CreateSavingGoalResponse.class);
     } catch (IOException e) {
-      throw new IOException("reason: ", e);
+      logger.error("error creating a new saving goal: ", e);
+      return null;
     }
   }
 
   @Override
-  public SavingGoalTransferResponse addMoneyToSaving(String token, String accountUid,
+  public SavingGoalTransferResponse addMoneyToSavingGoal(String token, String accountUid,
       SavingGoal savingGoal, Integer amountToAdd) throws IOException {
     var topUpRequest = new TopUpRequest(
         new Amount(savingGoal.totalSaved().currency(), amountToAdd));
@@ -122,54 +117,11 @@ public class SavingApiClient implements SavingServiceClient {
         .build();
     ResponseBody body = this.httpClient.newCall(request).execute().body();
     try {
-      SavingGoalTransferResponse savingGoalTransferResult = this.mapper.readValue(body.string(),
+      return this.mapper.readValue(body.string(),
           SavingGoalTransferResponse.class);
-      return savingGoalTransferResult;
     } catch (IOException e) {
-      throw new IOException("reason: ", e);
+      logger.error("error adding money to a saving goal: ", e);
+      return null;
     }
-  }
-
-  private HttpUrl buildSavingGoalsUrl(String accountUid) {
-    return new HttpUrl
-        .Builder()
-        .scheme(SCHEME)
-        .host(HOST)
-        .addPathSegment(API_PREFIX)
-        .addPathSegment(API_V2)
-        .addPathSegment(ACCOUNT_RESOURCE_SEGMENT)
-        .addPathSegment(accountUid)
-        .addPathSegment(SAVINGS_RESOURCE_SEGMENT)
-        .build();
-  }
-
-  private HttpUrl buildSavingGoalByIdUrl(String accountUid, String savingGoalUid) {
-    return new HttpUrl
-        .Builder()
-        .scheme(SCHEME)
-        .host(HOST)
-        .addPathSegment(API_PREFIX)
-        .addPathSegment(API_V2)
-        .addPathSegment(ACCOUNT_RESOURCE_SEGMENT)
-        .addPathSegment(accountUid)
-        .addPathSegment(SAVINGS_RESOURCE_SEGMENT)
-        .addPathSegment(savingGoalUid)
-        .build();
-  }
-
-  private HttpUrl buildTopUpSavingUrl(String accountUid, String savingGoalUid) {
-    return new HttpUrl
-        .Builder()
-        .scheme(SCHEME)
-        .host(HOST)
-        .addPathSegment(API_PREFIX)
-        .addPathSegment(API_V2)
-        .addPathSegment(ACCOUNT_RESOURCE_SEGMENT)
-        .addPathSegment(accountUid)
-        .addPathSegment(SAVINGS_RESOURCE_SEGMENT)
-        .addPathSegment(savingGoalUid)
-        .addPathSegment(SAVINGS_ADD_MONEY_SEGMENT)
-        .addPathSegment(UUID.randomUUID().toString())
-        .build();
   }
 }

@@ -11,10 +11,19 @@ import org.example.handlers.interfaces.RoundUpRealtimeCommandHandler;
 import org.example.handlers.interfaces.RoundUpWeeklyCommandHandler;
 import org.example.httpserver.HttpServerConfig;
 import org.example.webhooks.RoundUpWebhookEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BenefitsCalculationMicroservice {
-
+  private static final Logger logger = LoggerFactory.getLogger(BenefitsCalculationMicroservice.class);
   public static void main(String[] args) throws IOException {
+    logger.info("                                                                                                                               \n"
+        + ",-----.                       ,---.,--.  ,--.           ,-----.       ,--.             ,--.          ,--.  ,--.                \n"
+        + "|  |) /_ ,---. ,--,--, ,---. /  .-'`--',-'  '-. ,---.  '  .--./,--,--.|  |,---.,--.,--.|  | ,--,--.,-'  '-.`--' ,---. ,--,--,  \n"
+        + "|  .-.  \\ .-. :|      \\ .-. :|  `-,,--.'-.  .-'(  .-'  |  |   ' ,-.  ||  | .--'|  ||  ||  |' ,-.  |'-.  .-',--.| .-. ||      \\ \n"
+        + "|  '--' |   --.|  ||  \\   --.|  .-'|  |  |  |  .-'  `) '  '--'\\ '-'  ||  \\ `--.'  ''  '|  |\\ '-'  |  |  |  |  |' '-' '|  ||  | \n"
+        + "`------' `----'`--''--'`----'`--'  `--'  `--'  `----'   `-----'`--`--'`--'`---' `----' `--' `--`--'  `--'  `--' `---' `--''--' "
+        + "\"by Italo Santana\"");
     HttpServerConfig serverConfig = new HttpServerConfig();
     serverConfig.start(getPublishedEndpoints());
   }

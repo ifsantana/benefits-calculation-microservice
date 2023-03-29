@@ -8,7 +8,7 @@ public class HttpResponseWrapper {
   private HttpResponseWrapper() {}
 
   /**
-   *
+   * This method handles custom HttpResponses.
    * @param - exchange
    * @param - httpResponse
    * @throws IOException
@@ -21,7 +21,7 @@ public class HttpResponseWrapper {
   }
 
   /**
-   *
+   * This method handles standard 404 HttpResponse.
    * @param - exchange
    * @throws IOException
    */
@@ -30,7 +30,7 @@ public class HttpResponseWrapper {
   }
 
   /**
-   *
+   * This method handles standard 200 HttpResponse.
    * @param - exchange
    * @throws IOException
    */
@@ -39,7 +39,7 @@ public class HttpResponseWrapper {
   }
 
   /**
-   *
+   * This method handles standard 405 HttpResponse.
    * @param - exchange
    * @throws IOException
    */
@@ -48,7 +48,7 @@ public class HttpResponseWrapper {
   }
 
   /**
-   *
+   * This method handles standard 422 HttpResponse.
    * @param - exchange
    * @throws IOException
    */
@@ -57,7 +57,7 @@ public class HttpResponseWrapper {
   }
 
   /**
-   *
+   * This method handles standard 500 HttpResponse.
    * @param - exchange
    * @throws IOException
    */
