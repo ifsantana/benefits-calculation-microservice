@@ -127,54 +127,22 @@ Here are some PROS on using this kinda of architectural/design approach:
 
 * **Assumptions**:
 
-Aiming to extend this solution, I have decided for this approach intending to provide a decoupled
-solutions for future implementations, since it needs to integrate with a lot of different services
-to perform a specific task.
 
-* **Constraints**: Capture any additional constraints to the environment that the chosen
-  alternative (the decision) might pose.
+* **Constraints**: 
 
-* **Positions**: List the positions (viable options or alternatives) you considered. These often
-  require long explanations, sometimes even models and diagrams. This isn’t an exhaustive list.
-  However, you don’t want to hear the question "Did you think about...?" during a final review; this
-  leads to loss of credibility and questioning of other architectural decisions. This section also
-  helps ensure that you heard others’ opinions; explicitly stating other opinions helps enroll their
-  advocates in your decision.
+* **Positions**: 
 
-* **Argument**: Outline why you selected a position, including items such as implementation cost,
-  total ownership cost, time to market, and required development resources’ availability. This is
-  probably as important as the decision itself.
+* **Argument**:
 
-* **Implications**: A decision comes with many implications, as the REMAP metamodel denotes. For
-  example, a decision might introduce a need to make other decisions, create new requirements, or
-  modify existing requirements; pose additional constraints to the environment; require
-  renegotiating scope or schedule with customers; or require additional staff training. Clearly
-  understanding and stating your decision’s implications can be very effective in gaining buy-in and
-  creating a roadmap for architecture execution.
+* **Implications**: 
 
-* **Related decisions**: It’s obvious that many decisions are related; you can list them here.
-  However, we’ve found that in practice, a traceability matrix, decision trees, or metamodels are
-  more useful. Metamodels are useful for showing complex relationships diagrammatically (such as
-  Rose models).
+* **Related decisions**:
 
-1.
+* **Related requirements**:
 
-* **Related requirements**: Decisions should be business driven. To show accountability, explicitly
-  map your decisions to the objectives or requirements. You can enumerate these related requirements
-  here, but we’ve found it more convenient to reference a traceability matrix. You can assess each
-  architecture decision’s contribution to meeting each requirement, and then assess how well the
-  requirement is met across all decisions. If a decision doesn’t contribute to meeting a
-  requirement, don’t make that decision.
+* **Related artifacts**: 
 
-1.
-
-* **Related artifacts**: List the related architecture, design, or scope documents that this
-  decision impacts.
-
-* **Related principles**: If the enterprise has an agreed-upon set of principles, make sure the
-  decision is consistent with one or more of them. This helps ensure alignment along domains or
-  systems.
+* **Related principles**: 
 
 * **Notes**:
-    * To Do - I didn't cover all tests scenarios, because of 
 
